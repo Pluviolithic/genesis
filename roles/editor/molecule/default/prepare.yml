@@ -1,0 +1,12 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Install python for Ansible (arch)
+      raw: pacman -Sy python3 --noconfirm
+      ignore_errors: true
+
+    - name: Install python for Ansible (ubuntu)
+      raw: apt -y update && apt install -y python3
+      ignore_errors: true

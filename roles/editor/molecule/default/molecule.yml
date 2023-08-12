@@ -1,0 +1,16 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: docker-arch-instance
+    image: docker.io/library/archlinux:base
+    pre_build_image: true
+  - name: docker-ubuntu-image
+    image: docker.io/library/ubuntu:jammy
+    pre_build_image: true
+provisioner:
+  name: ansible
+verifier:
+  name: ansible

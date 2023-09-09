@@ -3,6 +3,8 @@
     upgrade: true
     update_cache: true
   when: ansible_facts['distribution'] == "Archlinux"
+  tags:
+    - molecule-idempotence-notest
 
 - name: Install pacman packages
   community.general.pacman:
@@ -13,42 +15,29 @@
       - fakeroot
       - sudo
       - git
+      - ripgrep
     state: present
   when: ansible_facts['distribution'] == "Archlinux"
 
-- name: Add non-root user
-  ansible.builtin.user:
-    name: plum
-    shell: /bin/bash
-    groups: wheel
-    create_home: true
+- name: Update ca certificates
+  command: update-ca-certificates --fresh
+  when: ansible_facts['distribution'] == "Ubuntu"
+  tags:
+    - molecule-idempotence-notest
 
-- name: Download neovim nightly
-  ansible.builtin.git:
-    repo: https://aur.archlinux.org/neovim-nightly-bin.git
-    dest: /tmp/neovim-nightly-bin
-  when: ansible_facts['distribution'] == "Archlinux"
-
-- name: Install neovim nightly
-  command: makepkg -si
-  args:
-    chdir: /tmp/neovim-nightly-bin
-  become_user: plum
-  become: false
-  register: something_here
-  when: ansible_facts['distribution'] == "Archlinux"
-  ignore_errors: true
-
-- name: DEBUG
-  ansible.builtin.debug:
-    msg: "{{ something_here }}"
-  when: ansible_facts['distribution'] == "Archlinux"
+- name: Enable neovim-ppa
+  ansible.builtin.apt_repository:
+    repo: ppa:neovim-ppa/unstable
+  when: ansible_facts['distribution'] == "Ubuntu"
 
 - name: Install apt packages
   ansible.builtin.apt:
     pkg:
       - nodejs
       - npm
+      - ripgrep
+      - neovim
+      - sudo
     state: present
     update_cache: true
   when: ansible_facts['distribution'] == "Ubuntu"

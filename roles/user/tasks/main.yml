@@ -1,0 +1,5 @@
+---
+# tasks file for user
+
+- name: Setup plum user
+  ansible.builtin.include_tasks: setup_plum_user.yml

@@ -1,0 +1,36 @@
+# TODO: Be sure to to reverse the sudoer nopasswd later during setup
+- name: Add plum sudoers file for arch
+  ansible.builtin.file:
+    path: /etc/sudoers.d/plum
+    state: touch
+    force: false
+  tags:
+    - molecule-idempotence-notest
+
+- name: Add permissions line to sudoers
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers.d/plum
+    line: "plum ALL=(ALL:ALL) NOPASSWD: ALL"
+
+- name: Check if neovim nightly bin target directory exists
+  ansible.builtin.stat:
+    path: /home/plum/Repos/neovim-nightly-bin
+  register: neovim_bin_check
+
+- name: Download neovim nightly
+  ansible.builtin.git:
+    repo: https://aur.archlinux.org/neovim-nightly-bin.git
+    dest: /home/plum/Repos/neovim-nightly-bin
+  when: not neovim_bin_check.stat.exists
+
+- name: Give plum write permissions
+  ansible.builtin.file:
+    path: /home/plum/Repos/neovim-nightly-bin
+    owner: plum
+
+- name: Build and install neovim nightly package
+  shell: sudo -u plum makepkg -si --noconfirm
+  args:
+    chdir: /home/plum/Repos/neovim-nightly-bin
+  tags:
+    - molecule-idempotence-notest

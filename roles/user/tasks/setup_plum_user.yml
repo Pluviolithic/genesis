@@ -1,0 +1,22 @@
+- name: create wheel group
+  ansible.builtin.group:
+    name: wheel
+    state: present
+
+- name: Add non-root user
+  ansible.builtin.user:
+    name: plum
+    shell: /bin/bash
+    groups: wheel
+    create_home: true
+
+- name: Create repos directory
+  ansible.builtin.file:
+    path: /home/plum/Repos
+    owner: plum
+    state: directory
+    mode: "0755"
+
+- name: Install neovim nightly
+  ansible.builtin.include_tasks: install_neovim_nightly_arch.yml
+  when: ansible_facts['distribution'] == "Archlinux"

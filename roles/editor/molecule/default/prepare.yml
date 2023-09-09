@@ -4,7 +4,7 @@
   gather_facts: false
   tasks:
     - name: Install python for Ansible (arch)
-      raw: pacman -Sy python3 --noconfirm
+      raw: pacman -Syyu python3 --noconfirm
       ignore_errors: true
 
     - name: Install python for Ansible (ubuntu)

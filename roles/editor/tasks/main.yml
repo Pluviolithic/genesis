@@ -2,4 +2,4 @@
 # tasks file for editor
 
 - name: Install packages
-  include_tasks: install_deps.yml
+  ansible.builtin.include_tasks: install_deps.yml

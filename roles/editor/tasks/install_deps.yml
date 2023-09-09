@@ -9,7 +9,39 @@
     name:
       - nodejs
       - npm
+      - gcc
+      - fakeroot
+      - sudo
+      - git
     state: present
+  when: ansible_facts['distribution'] == "Archlinux"
+
+- name: Add non-root user
+  ansible.builtin.user:
+    name: plum
+    shell: /bin/bash
+    groups: wheel
+    create_home: true
+
+- name: Download neovim nightly
+  ansible.builtin.git:
+    repo: https://aur.archlinux.org/neovim-nightly-bin.git
+    dest: /tmp/neovim-nightly-bin
+  when: ansible_facts['distribution'] == "Archlinux"
+
+- name: Install neovim nightly
+  command: makepkg -si
+  args:
+    chdir: /tmp/neovim-nightly-bin
+  become_user: plum
+  become: false
+  register: something_here
+  when: ansible_facts['distribution'] == "Archlinux"
+  ignore_errors: true
+
+- name: DEBUG
+  ansible.builtin.debug:
+    msg: "{{ something_here }}"
   when: ansible_facts['distribution'] == "Archlinux"
 
 - name: Install apt packages

@@ -1,15 +1,25 @@
-- name: Install packer.nvim
-  ansible.builtin.git:
-    repo: https://github.com/wbthomason/packer.nvim
-    dest: /home/plum/.local/share/nvim/site/pack/packer/start/packer.nvim
-    depth: 1
+#- name: Install packer.nvim
+#ansible.builtin.git:
+#repo: https://github.com/wbthomason/packer.nvim
+#dest: /home/plum/.local/share/nvim/site/pack/packer/start/packer.nvim
+#depth: 1
 
-- name: Copy theprimeagen nvim config
-  ansible.builtin.git:
-    repo: https://github.com/Pluviolithic/nvim-config
-    dest: /home/plum/.config/nvim
+#- name: Copy theprimeagen nvim config
+#  ansible.builtin.git:
+#    repo: https://github.com/Pluviolithic/nvim-config
+#    dest: /home/plum/.config/nvim
+
+- name: Install packer.nvim
+  ansible.builtin.command: sudo -u plum git clone --depth 1 https://github.com/wbthomason/packer.nvim /home/plum/.local/share/nvim/site/pack/packer/start/packer.nvim
+  tags:
+    - molecule-idempotence-notest
+
+- name: Install packer.nvim
+  ansible.builtin.command: sudo -u plum git clone https://github.com/Pluviolithic/nvim-config /home/plum/.config/nvim
+  tags:
+    - molecule-idempotence-notest
 
 - name: Install packer packages
-  ansible.builtin.command: sudo -u plum sudo nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+  ansible.builtin.command: sudo -u plum nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
   tags:
     - molecule-idempotence-notest
